@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 
 const PLAYER_ID = '69cd7f7227faeae80a040f27'
 const SCRIPT_SRC = `https://scripts.converteai.net/7519d23b-8afe-41cb-99c7-d411e4dcdb71/players/${PLAYER_ID}/v4/player.js`
+const VIDEO_DURATION_MS = 75000 // VSL 1 = 1:11 + 4s margem
 
 export default function VideoStep({ onNext }) {
   const [canContinue, setCanContinue] = useState(false)
@@ -16,6 +17,9 @@ export default function VideoStep({ onNext }) {
       document.head.appendChild(script)
     }
 
+    // Fallback timer: libera botao apos duracao do video
+    const fallbackTimer = setTimeout(() => setCanContinue(true), VIDEO_DURATION_MS)
+
     // Poll until the custom element is upgraded and listen for video end
     const tryAttach = () => {
       if (listenerRef.current) return
@@ -24,13 +28,10 @@ export default function VideoStep({ onNext }) {
 
       const handleEnd = () => setCanContinue(true)
 
-      // Vturb fires 'ended' on the smartplayer element
       el.addEventListener('ended', handleEnd)
-      // Also try 'videoended' as some Vturb versions use this
       el.addEventListener('videoended', handleEnd)
       listenerRef.current = true
 
-      // Clean up is handled by the return below
       cleanupRef.current = () => {
         el.removeEventListener('ended', handleEnd)
         el.removeEventListener('videoended', handleEnd)
@@ -42,6 +43,7 @@ export default function VideoStep({ onNext }) {
     tryAttach()
 
     return () => {
+      clearTimeout(fallbackTimer)
       clearInterval(interval)
       if (cleanupRef.current) cleanupRef.current()
     }

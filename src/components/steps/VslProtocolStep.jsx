@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 
 const PLAYER_ID = '69d019079a320eec0638178a'
 const SCRIPT_SRC = `https://scripts.converteai.net/7519d23b-8afe-41cb-99c7-d411e4dcdb71/players/${PLAYER_ID}/v4/player.js`
+const VIDEO_DURATION_MS = 150000 // VSL 2 = 2:25 + 5s margem
 
 export default function VslProtocolStep({ onNext, name }) {
   const [canContinue, setCanContinue] = useState(false)
@@ -15,6 +16,9 @@ export default function VslProtocolStep({ onNext, name }) {
       script.async = true
       document.head.appendChild(script)
     }
+
+    // Fallback timer: libera botao apos duracao do video
+    const fallbackTimer = setTimeout(() => setCanContinue(true), VIDEO_DURATION_MS)
 
     // Poll until the custom element is upgraded and listen for video end
     const tryAttach = () => {
@@ -39,6 +43,7 @@ export default function VslProtocolStep({ onNext, name }) {
     tryAttach()
 
     return () => {
+      clearTimeout(fallbackTimer)
       clearInterval(interval)
       if (cleanupRef.current) cleanupRef.current()
     }
