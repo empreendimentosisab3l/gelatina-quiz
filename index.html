@@ -1,13 +1,98 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Truque da Gelatina Mounjaro</title>
+
+    <!-- SEO -->
+    <title>Gelatina Mounjaro - Descubra o Truque Para Perder Ate 12kg em 30 Dias</title>
+    <meta name="description" content="Faca o quiz e descubra como ativar seu metabolismo e perder ate 12kg em 30 dias com a Gelatina Mounjaro. 100% natural, mais de 127.000 mulheres ja experimentaram." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://monjarogelatina.shop/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gelatina Mounjaro - Truque Para Perder Ate 12kg em 30 Dias" />
+    <meta property="og:description" content="Faca o quiz personalizado e descubra como a Gelatina Mounjaro pode acelerar seu metabolismo. 127.000+ mulheres ja aprovaram!" />
+    <meta property="og:url" content="https://monjarogelatina.shop/" />
+    <meta property="og:site_name" content="Gelatina Mounjaro" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gelatina Mounjaro - Quiz Personalizado" />
+    <meta name="twitter:description" content="Descubra como perder ate 12kg em 30 dias com a Gelatina Mounjaro." />
+
+    <!-- RedTrack -->
+    <script type="text/javascript" src="https://red.track.monjarogelatina.shop/track.js"></script>
+
+    <!-- Payt Query Parameters -->
+    <script src="https://payt.com.br/cdn/queryparameters.js"></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- UTM Passthrough: salva UTMs e propaga para links externos -->
+    <script>
+    !(function () {
+      var UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','xcod'];
+
+      // Salvar UTMs da URL no localStorage
+      var urlParams = new URLSearchParams(window.location.search);
+      urlParams.forEach(function(value, key) {
+        var normalizedKey = key.endsWith('_mnr') ? key.replace(/_mnr$/, '') : key;
+        if (UTM_KEYS.indexOf(normalizedKey) !== -1) {
+          localStorage.setItem(normalizedKey, value);
+        }
+      });
+
+      // Propagar UTMs para links externos (observer para SPA)
+      var appendUtmsToLinks = function() {
+        var links = document.querySelectorAll('a[href]');
+        links.forEach(function(link) {
+          try {
+            var url = new URL(link.href, window.location.origin);
+            if (url.origin !== window.location.origin) {
+              UTM_KEYS.forEach(function(key) {
+                var stored = localStorage.getItem(key);
+                if (stored) url.searchParams.set(key, stored);
+              });
+              link.href = url.toString();
+            }
+          } catch(e) {}
+        });
+      };
+
+      // Propagar params da URL original para links externos
+      var passQueryParams = function() {
+        var qs = new URLSearchParams(window.location.search);
+        if (!qs.toString()) return;
+        var links = document.querySelectorAll('a[href]');
+        links.forEach(function(link) {
+          if (link.href.includes('#')) return;
+          try {
+            var u = new URL(link.href);
+            var q = new URLSearchParams(u.search);
+            for (var pair of qs.entries()) {
+              if (!q.has(pair[0])) q.set(pair[0], pair[1]);
+            }
+            u.search = q.toString();
+            link.href = u.toString();
+          } catch(e) {}
+        });
+      };
+
+      // Rodar ao carregar e observar mudancas no DOM (SPA)
+      var run = function() {
+        appendUtmsToLinks();
+        passQueryParams();
+      };
+      document.addEventListener('DOMContentLoaded', run);
+      var observer = new MutationObserver(function() { setTimeout(run, 100); });
+      observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+    })();
+    </script>
   </body>
 </html>

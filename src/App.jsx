@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import './index.css'
 
 import QuizLayout from './components/QuizLayout'
@@ -35,27 +35,53 @@ import VslProtocolStep from './components/steps/VslProtocolStep'
 import SalesPage from './components/steps/SalesPage'
 
 const TOTAL_STEPS = 30
+const STORAGE_KEY_STEP = 'gelatina_quiz_step'
+const STORAGE_KEY_DATA = 'gelatina_quiz_data'
+
+const DEFAULT_DATA = {
+  name: '',
+  age: '',
+  bodyType: '',
+  bodyAreas: [],
+  appearance: '',
+  weightImpact: '',
+  barriers: [],
+  goals: [],
+  weight: 75,
+  height: 165,
+  desiredWeight: 65,
+  pregnancies: '',
+  routine: [],
+  sleep: '',
+  water: '',
+  dreamBody: '',
+}
+
+function loadSavedState() {
+  try {
+    const savedStep = localStorage.getItem(STORAGE_KEY_STEP)
+    const savedData = localStorage.getItem(STORAGE_KEY_DATA)
+    return {
+      step: savedStep ? parseInt(savedStep, 10) : 0,
+      data: savedData ? { ...DEFAULT_DATA, ...JSON.parse(savedData) } : DEFAULT_DATA,
+    }
+  } catch {
+    return { step: 0, data: DEFAULT_DATA }
+  }
+}
 
 function App() {
-  const [step, setStep] = useState(0)
-  const [data, setData] = useState({
-    name: '',
-    age: '',
-    bodyType: '',
-    bodyAreas: [],
-    appearance: '',
-    weightImpact: '',
-    barriers: [],
-    goals: [],
-    weight: 75,
-    height: 165,
-    desiredWeight: 65,
-    pregnancies: '',
-    routine: [],
-    sleep: '',
-    water: '',
-    dreamBody: '',
-  })
+  const saved = loadSavedState()
+  const [step, setStep] = useState(saved.step)
+  const [data, setData] = useState(saved.data)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_STEP, String(step))
+  }, [step])
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(data))
+  }, [data])
 
   const goNext = useCallback(() => {
     setStep((prev) => Math.min(prev + 1, TOTAL_STEPS))
