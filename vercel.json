@@ -1,13 +1,12 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/upsell",
-      "destination": "/upsell/index.html"
-    },
-    {
-      "source": "/upsell/(.*)",
-      "destination": "/upsell/$1"
-    },
+      "destination": "/upsell/",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
     {
       "source": "/((?!upsell).*)",
       "destination": "/index.html"
