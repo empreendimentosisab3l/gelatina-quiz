@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(mv * .* ../)",
+      "Bash(rm -rf gelatina-quiz-clone)",
+      "Bash(npm install:*)",
+      "Bash(curl -sL \"https://gelatinmounjaro.lovable.app/assets/logo_mounjaro-C60-3xGs.png\" -o /Users/herberthbrito/Downloads/gelatina-quiz/src/assets/logo_mounjaro.png)",
+      "Bash(curl -sL \"https://gelatinmounjaro.lovable.app/assets/quiz_intro-xKAquP0r.png\" -o /Users/herberthbrito/Downloads/gelatina-quiz/src/assets/quiz_intro.png)",
+      "Bash(ls -la /Users/herberthbrito/Downloads/gelatina-quiz/src/assets/*.png)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm run:*)"
+    ]
+  }
+}
