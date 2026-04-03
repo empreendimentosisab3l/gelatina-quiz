@@ -2,22 +2,13 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/upsell",
-      "destination": "/upsell/",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
-      "source": "/upsell/:path*",
-      "destination": "/upsell/:path*"
+      "source": "/upsell",
+      "destination": "/upsell/index.html"
     },
     {
-      "source": "/:path((?!upsell).*)",
+      "source": "/((?!upsell/).*)",
       "destination": "/index.html"
     }
   ]
