@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 
 const PLAYER_ID = '69cd7f7227faeae80a040f27'
 const SCRIPT_SRC = `https://scripts.converteai.net/7519d23b-8afe-41cb-99c7-d411e4dcdb71/players/${PLAYER_ID}/v4/player.js`
-const VIDEO_DURATION_MS = 75000 // VSL 1 = 1:11 + 4s margem
+const DELAY_SECONDS = 71 // VSL 1 = 1:11
 
 export default function VideoStep({ onNext }) {
   const [canContinue, setCanContinue] = useState(false)
@@ -17,24 +17,29 @@ export default function VideoStep({ onNext }) {
       document.head.appendChild(script)
     }
 
-    // Fallback timer: libera botao apos duracao do video
-    const fallbackTimer = setTimeout(() => setCanContinue(true), VIDEO_DURATION_MS)
-
-    // Poll until the custom element is upgraded and listen for video end
+    // Use Vturb displayHiddenElements API with persist cache
     const tryAttach = () => {
       if (listenerRef.current) return
-      const el = document.getElementById(`vid-${PLAYER_ID}`)
-      if (!el) return
+      const player = document.getElementById(`vid-${PLAYER_ID}`)
+      if (!player) return
 
+      const onReady = () => {
+        player.displayHiddenElements(DELAY_SECONDS, ['.vsl1-hidden'], {
+          persist: true,
+        })
+      }
+      player.addEventListener('player:ready', onReady)
+
+      // Also listen for ended as additional trigger
       const handleEnd = () => setCanContinue(true)
-
-      el.addEventListener('ended', handleEnd)
-      el.addEventListener('videoended', handleEnd)
+      player.addEventListener('ended', handleEnd)
+      player.addEventListener('videoended', handleEnd)
       listenerRef.current = true
 
       cleanupRef.current = () => {
-        el.removeEventListener('ended', handleEnd)
-        el.removeEventListener('videoended', handleEnd)
+        player.removeEventListener('player:ready', onReady)
+        player.removeEventListener('ended', handleEnd)
+        player.removeEventListener('videoended', handleEnd)
       }
     }
 
@@ -42,9 +47,22 @@ export default function VideoStep({ onNext }) {
     const interval = setInterval(tryAttach, 300)
     tryAttach()
 
+    // Observe when Vturb reveals the hidden element
+    const observer = new MutationObserver(() => {
+      const el = document.querySelector('.vsl1-hidden')
+      if (el && el.style.display !== 'none') {
+        setCanContinue(true)
+      }
+    })
+    observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['style'] })
+
+    // Fallback timer in case Vturb API fails entirely
+    const fallbackTimer = setTimeout(() => setCanContinue(true), (DELAY_SECONDS + 5) * 1000)
+
     return () => {
       clearTimeout(fallbackTimer)
       clearInterval(interval)
+      observer.disconnect()
       if (cleanupRef.current) cleanupRef.current()
     }
   }, [])
@@ -83,6 +101,9 @@ export default function VideoStep({ onNext }) {
           </p>
         )}
       </div>
+
+      {/* Hidden element controlled by Vturb displayHiddenElements */}
+      <div className="vsl1-hidden" style={{ display: 'none' }} />
 
       {canContinue && (
         <button
