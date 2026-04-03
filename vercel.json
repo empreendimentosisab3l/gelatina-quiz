@@ -7,6 +7,10 @@
     {
       "source": "/upsel-2/:path*",
       "destination": "https://upsel-2.vercel.app/:path*"
+    },
+    {
+      "source": "/((?!upsel-2).*)",
+      "destination": "/index.html"
     }
   ]
 }
