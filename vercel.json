@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/upsell",
+      "destination": "/upsell/index.html"
+    },
+    {
+      "source": "/upsell/(.*)",
+      "destination": "/upsell/$1"
+    },
+    {
+      "source": "/((?!upsell).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
